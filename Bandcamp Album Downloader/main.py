@@ -1,8 +1,8 @@
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
+from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from webdriver_manager.chrome import ChromeDriverManager
 import ctypes
 import codecs
 import re
@@ -58,7 +58,7 @@ tracks_info = dict(zip(nums, map(list, zip(*(map(str, e) for e in (titles, lengt
 
 #Set up WebDriver
 driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()))
-wait = WebDriverWait(10)
+wait = WebDriverWait(driver, 10)
 
 driver.get(url)
 
@@ -69,12 +69,14 @@ if got_url == url:
     source = got_url
 
 for k in tracks_info:
-    pass
+    #driver.find_element()
     # find button
     # play button
     # get url
     #save in the dict
+    pass
 
+driver.close()
 
 
 
