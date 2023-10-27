@@ -1,8 +1,10 @@
 from selenium import webdriver
-from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.common.by import By
 from webdriver_manager.chrome import ChromeDriverManager
+from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+
 import ctypes
 import codecs
 import re
@@ -43,42 +45,41 @@ track_table = soup.find('table', class_='track_list track_table')
 track_list = track_table.find_all('div', class_='track_number secondaryText')
 nums = [i.get_text() for i in track_list]
 
+#Track Titles
 track_titles = track_table.find_all('span', class_='track-title')
 titles = [i.get_text() for i in track_titles]
 
+#Track Lengths
 track_lengths = track_table.find_all('span', class_='time secondaryText')
 track_lengths = [i.get_text().replace(' ', '') for i in track_lengths]
 lengths = [i.replace('\n', '') for i in track_lengths]
 
-track_buttons = track_table.find_all('div', class_='play_status')
-print(track_buttons)
-
-tracks_info = dict(zip(nums, map(list, zip(*(map(str, e) for e in (titles, lengths))))))
-
+#Track Files
+files = []
 
 #Set up WebDriver
-driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()))
-wait = WebDriverWait(driver, 10)
-
+options = webdriver.ChromeOptions()
+# options.add_argument("--headless=new")
+options.add_argument('--incognito')
+options.add_argument('--mute-audio')
+options.add_experimental_option('detach', True)
+driver = webdriver.Chrome(options=options)
 driver.get(url)
 
-got_url = driver.current_url
-wait.until(EC.url_to_be(url))
-
-if got_url == url:
-    source = got_url
-
-for k in tracks_info:
-    #driver.find_element()
-    # find button
-    # play button
-    # get url
-    #save in the dict
-    pass
+for i in range(len(track_list)):
+    track_play = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.CLASS_NAME, 'play_status')))
+    play_button = driver.find_elements(By.CLASS_NAME, 'play_status')[i]
+    play_button.click()
+    files.append(driver.find_element(By.TAG_NAME, 'audio').get_attribute('src'))
 
 driver.close()
+driver.quit()
 
+#Mount Album Dictionary
+tracks_info = dict(zip(nums, map(list, zip(*(map(str, e) for e in (titles, lengths, files))))))
 
+for i in tracks_info.items():
+    print(i)
 
 
 
