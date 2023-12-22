@@ -23,6 +23,7 @@ colors = ['black', 'white', 'grey', 'yellow']
 save_path = ''
 cover = None
 
+
 def main():
     url = url_entry.get()
     save_path = path_entry.get()
@@ -101,12 +102,12 @@ def main():
 
     for key, value in tracks_info.items():
         title = key + ' ' + value[0] + '.mp3'
-        save_from_url(title, value[2])
+        save_from_url(fullpath + title, value[2])
 
 
-def save_from_url(title, url):
-    # rq.urlretrieve(url, fullpath + title)
-    pass
+def save_from_url(path, url):
+    rq.urlretrieve(url, path)
+    # pass
 
 
 root = tk.Tk()
@@ -121,7 +122,6 @@ frame = tk.Frame(root)
 frame.place(relwidth=0.85, relheight=0.85, relx=0.05, rely=0.1)
 frame.configure(bg=colors[0])
 frame.grid_columnconfigure(1, weight=3)
-
 
 url_label = tk.Label(frame, text='Album URL: ')
 url_label.configure(bg=colors[0], fg=colors[1])
@@ -138,9 +138,9 @@ path_entry.configure(bg=colors[2], fg=colors[3])
 path_entry.grid(row=1, column=1, sticky='we')
 
 
-
 def ask_directory():
     save_path = tk.filedialog.askdirectory()
+    path_entry.insert(0, save_path)
 
 
 path_button = tk.Button(frame, text='Browse', command=ask_directory)
@@ -158,6 +158,5 @@ status_label.grid(row=3, column=1)
 cover_label = tk.Label(frame, image=cover)
 cover_label.configure(bg=colors[0])
 cover_label.grid(row=4, column=1, pady=10)
-
 
 root.mainloop()
